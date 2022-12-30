@@ -1,0 +1,17 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"console": "integratedTerminal",
+			"type": "node",
+			"request": "launch",
+			"name": "Launch Nodemon debugger",
+			"skipFiles": ["<node_internals>/**"],
+			"program": "${workspaceFolder}\\src\\bootstrap.js",
+			"envFile": "${workspaceFolder}\\.env",
+			"restart": true,
+			"runtimeExecutable": "nodemon",
+			"internalConsoleOptions": "neverOpen"
+		}
+	]
+}
