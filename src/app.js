@@ -1,12 +1,12 @@
 import { Server } from './server.js';
+import config from './config/main.config.js';
 
 export class App {
 	async start() {
-		this.port = process.env.PORT || 8080;
+		this.port = config.port;
 		this.server = new Server(this.port);
 		return this.server.listen();
 	}
-
 	get httpServer() {
 		if (this.server) return this.server.getHTTPServer();
 	}
@@ -15,7 +15,7 @@ export class App {
 		if (this.server) return this.server.stop();
 	}
 
-	debug(message) {
+	async debug(message) {
 		return console.log(message);
 	}
 }

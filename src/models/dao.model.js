@@ -2,13 +2,12 @@ import mongoose from 'mongoose';
 import { Order } from './orders.model.js';
 import { Product } from './products.model.js';
 import { User } from './users.model.js';
-
-const dbUri = `mongodb://127.0.0.1:27017/BackendRest`;
+import config from '../config/main.config.js';
 
 export class Dao {
 	constructor() {
 		mongoose.set('strictQuery', false);
-		this.connection = mongoose.connect(dbUri);
+		this.connection = mongoose.connect(config.mongoUri);
 		const timestamps = {
 			timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 		};
