@@ -20,12 +20,28 @@ export class GenericRepository {
 		return this.dao.findOne(params, this.model);
 	};
 
+	findOneAndPopulate = (params, fieldRef) => {
+		return this.dao.findOneAnPopulate(params, fieldRef, this.model);
+	};
+
 	save = (data) => {
 		return this.dao.save(data, this.model);
 	};
 
+	saveMany = (arr) => {
+		return this.dao.saveMany(arr, this.model);
+	};
+
 	update = (filter, update) => {
 		return this.dao.update(filter, update, this.model);
+	};
+
+	deleteOne = (params) => {
+		return this.dao.deleteOne(params, this.model);
+	};
+
+	deleteMany = (params) => {
+		return this.dao.deleteMany(params, this.model);
 	};
 
 	destroy = () => {

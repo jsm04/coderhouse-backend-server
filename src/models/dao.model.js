@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
+import config from '../config/main.config.js';
 import { Order } from './orders.model.js';
 import { Product } from './products.model.js';
 import { User } from './users.model.js';
-import config from '../config/main.config.js';
 
 export class Dao {
 	constructor() {
 		mongoose.set('strictQuery', false);
+		mongoose.set('strictPopulate', false);
 		this.connection = mongoose.connect(config.mongoUri);
 		const timestamps = {
 			timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
@@ -45,9 +46,19 @@ export class Dao {
 		return await this.models[entity].findOne(params).lean();
 	};
 
+	findOneAnPopulate = async (params, fieldRef, entity) => {
+		this._isValidEntity(entity);
+		return await this.models[entity].find(params).populate(fieldRef).lean();
+	};
+
 	save = async (document, entity) => {
 		this._isValidEntity(entity);
 		return await this.models[entity].create(document);
+	};
+
+	saveMany = async (arr, entity) => {
+		this._isValidEntity(entity);
+		return await this.models[entity].insertMany(arr);
 	};
 
 	update = async (filter, update, entity) => {
@@ -55,6 +66,15 @@ export class Dao {
 		return await this.models[entity].findOneAndUpdate(filter, update, {
 			new: true
 		});
+	};
+	deleteOne = async (params, entity) => {
+		this._isValidEntity(entity);
+		return await this.models[entity].findOneAndDelete(params);
+	};
+
+	deleteMany = async (params, entity) => {
+		this._isValidEntity(entity);
+		return await this.models[entity].deleteMany(params);
 	};
 	destroy = async (entity) => {
 		this._isValidEntity(entity);

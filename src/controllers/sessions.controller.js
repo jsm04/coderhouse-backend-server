@@ -25,6 +25,7 @@ const registerHandler = (req, res) => {
 	if (req.session && req.session.token) {
 		return res.send({ status: 'error', message: 'user already has an active session' });
 	}
+	
 	const { email, id } = req.user;
 
 	const payload = {

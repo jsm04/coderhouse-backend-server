@@ -15,21 +15,13 @@ export class User {
 				enum: ['user', 'admin'],
 				default: 'user'
 			},
-			cart: {
-				products: [
-					{
-						product: { type: mongoose.Schema.Types.ObjectId, ref: 'Products' },
-						quantity: { type: Number, default: 1 },
-						_id: false
-					}
-				],
-				state: {
-					type: String,
-					enum: ['inactive', 'active', 'ordered'],
-					default: 'active'
-				},
-				timestamp: Date
-			}
+			cart: [
+				{
+					product: { type: mongoose.Schema.Types.ObjectId, ref: 'Products' },
+					quantity: { type: Number, default: 1 },
+					_id: false
+				}
+			]
 		};
 	}
 }
@@ -42,4 +34,10 @@ export class User {
 						_id: false
 					}
 				],
+
+
+
+	Working version
+
+	cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Products' }]
 */
