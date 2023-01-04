@@ -60,3 +60,13 @@ Available routes are (**_routes to test redirection, user auth, and admin auth_*
 
 1. TEST USER SESSION AUTH: GET at localhost:8080/auth: **no required body.**
 2. TEST ADMIN SESSION AUTH: GET at localhost:8080/adminAuth: **no required body.**
+
+## Env file format
+
+Only required env file property required to run tests is NODE_ENV='development', rest of config options are hardcoded for development mode in main.config.js file
+
+### NODE_ENV values
+
+NODE_ENV='development' | 'production'
+
+### Other env values are anexed on env.example file
