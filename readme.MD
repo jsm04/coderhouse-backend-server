@@ -8,6 +8,7 @@
 4. **Cart** functionality is embedded on each User database object, which means its functionality is related and its corresponding enpoints are inside of **/users** path and are contained in the '**users.repository.js**' and '**users.controllers.js**' file.
 5. Both '**/sessions**' and '**/products**' endpoints have a random payload generator acording to its model that are only available when NODE_ENV is **not** in production mode. **_eg_**: localhost:8080/api/v1/**_ENDPOINT_**/randomize.
 6. The only endpoint that contains a query param as a helper for populating users field in said request is **'/orders/list'**. Query param is _?user=true_
+7. **VSCODE users: The repository contains default vscode configuration script for running and debuggin the server. Please, _run from debugger_**
 
 ## Endpoints
 
