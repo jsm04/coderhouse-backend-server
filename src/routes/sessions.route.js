@@ -5,7 +5,8 @@ import sessionControllers from '../controllers/sessions.controller.js';
 import { renewRefreshToken } from '../middlewares/jwtTokens.js';
 
 const router = Router();
-const options = { session: false };
+
+const options = { session: false, failureMessage: true };
 
 router.get('/', sessionControllers.testHandler);
 router.post('/register', passport.authenticate('register', options), sessionControllers.registerHandler);

@@ -6,13 +6,16 @@ export class Order {
 	static get schema() {
 		return {
 			user: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true }],
-			order: [
+			orders: [
 				{
-					product: { type: mongoose.Schema.Types.ObjectId, ref: 'Products', required: true },
-					quantity: { type: Number, required: true }
+					cart: { type: Array, required: true },
+					status: {
+						type: String,
+						enum: ['pending', 'confirmed', 'completed'],
+						default: 'pending'
+					}
 				}
-			],
-			completed: { type: Boolean, default: false }
+			]
 		};
 	}
 }

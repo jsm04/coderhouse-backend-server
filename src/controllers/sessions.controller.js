@@ -12,22 +12,27 @@ const getAndSetJwtTokens = (req, payload) => {
 };
 
 const testHandler = (req, res) => {
+	if (process.env.NODE_ENV === 'production') {
+		return res.status(403).send({ status: 'error', message: 'this route is unavailable' });
+	}
 	const { session } = req;
-	if (!session.token) return res.send({ error: 'no session' });
+
+	if (!session.user) return res.send({ error: 'no active session' });
+
 	const response = {
 		status: 'ok',
 		session: req.session
 	};
+
 	res.send(response);
 };
 
 const registerHandler = (req, res) => {
-	if (req.session && req.session.token) {
+	if (req.session.user) {
 		return res.send({ status: 'error', message: 'user already has an active session' });
 	}
-	
-	const { email, id } = req.user;
 
+	const { email, id } = req.user;
 	const payload = {
 		email,
 		id
@@ -35,17 +40,18 @@ const registerHandler = (req, res) => {
 
 	getAndSetJwtTokens(req, payload);
 
-	return res.status(200).send({ status: 'success, user registered', user: req.session.user, token: req.session.token });
+	return res.status(200).send({ status: 'success, user registered', user: req.session.user, tokens: req.session.token });
 };
 
 const loginHandler = (req, res) => {
-	if (req.session && req.session.token) {
+	if (req.session.user) {
 		return res.send({ error: 'error', status: 'user already has an active session' });
 	}
 
-	if (!req.user) {
-		return res.send({ status: 'error', message: 'user does not exist' });
-	}
+	//! whats the purpuse of this?
+	// if (!req.user) {
+	// 	return res.send({ status: 'error', message: 'user does not exist' });
+	// }
 
 	const { email, id } = req.user;
 
@@ -56,17 +62,20 @@ const loginHandler = (req, res) => {
 
 	getAndSetJwtTokens(req, payload);
 
-	return res.status(200).send({ message: 'success, user logged in', user: req.session.user, token: req.session.token });
+	return res.status(200).send({ message: 'success, user logged in', user: req.session.user, tokens: req.session.token });
 };
 
 const logoutHandler = (req, res) => {
-	if (req.session) {
+	if (!req.session.user || !req.session.token) {
 		return res.send({ status: 'error', message: 'no active session to logout' });
 	}
+
 	req.session.destroy((err) => {
 		if (err) {
 			return res.status(400).send({ status: 'error', error: 'logout failed' });
 		}
+
+		req.session = null;
 		return res.status(200).send({ status: 'ok', message: 'user logout' });
 	});
 };

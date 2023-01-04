@@ -2,15 +2,10 @@ import crypto from 'crypto';
 import passport from 'passport';
 import local from 'passport-local';
 import { logger } from '../entities/logger.js';
+import { userService } from '../services/services.index.js';
 import { createHash, isValidHash } from '../utils/utilities.js';
 
 const LocalStrategy = local.Strategy;
-
-//TODO replace credentials with db implementation
-const credentials = {
-	email: 'test@test.com',
-	password: '1234abcd'
-};
 
 export const registerPassportStrategies = () => {
 	passport.use(
@@ -22,41 +17,40 @@ export const registerPassportStrategies = () => {
 			},
 			async (req, email, password, done) => {
 				try {
-					// if (req.session && req.session.token) {
-					// 	return done(null, false);
-					// }
-
-					// verification of the request
-					// should contain all field from request
-					// const {} = req.body;
-					// if invalid body return
-
-					if (!email || !password) {
+					if (req.session.user) {
 						return done(null, false, {
-							message: 'missing fields'
+							message: 'session still active'
 						});
 					}
 
-					const verifyPayload = () => {
-						if (email !== credentials.email || password !== credentials.password) {
-							return false;
-						}
-						return true;
-					};
+					const { name, lastname, username } = req.body;
 
-					if (!verifyPayload()) {
-						return done(null, false);
+					if ((!name, !lastname, !username, !password, !email)) {
+						return done(null, false, {
+							message: 'required field missing'
+						});
 					}
 
-					// dto for session store filter
+					const dbQuery = await userService.getByParam({ email: email });
+
+					const userExists = dbQuery.length > 0;
+
+					if (userExists) {
+						return done(null, false, {
+							message: 'email already in use'
+						});
+					}
 					const user = {
-						email: email,
-						id: crypto.randomUUID()
+						email,
+						password: createHash(password),
+						username,
+						name,
+						lastname
 					};
 
-					// store user in db with db.service in a separate process
+					const userPayload = await userService.save(user);
 
-					return done(null, user);
+					return done(null, userPayload);
 				} catch (err) {
 					logger.error(err);
 				}
@@ -73,49 +67,40 @@ export const registerPassportStrategies = () => {
 			async (email, password, done) => {
 				try {
 					if (!password || !email) {
-						return done(null, false);
+						return done(null, false), { message: 'required field missing' };
 					}
 
-					// user from db
-					const user = credentials;
+					const dbQuery = await userService.getByParam({ email: email });
 
-					if (email !== user.email) {
-						return done(null, false);
+					const userExists = dbQuery.length > 0;
+
+					if (!userExists) {
+						return done(null, false, { message: 'email not registered' });
 					}
 
-					// dto filter whats necesary
-					const payload = {
-						email: user.email,
-						id: crypto.randomUUID()
+					const user = dbQuery[0];
+
+					const validatePayload = () => {
+						if (user.email === email && isValidHash(password)) {
+							return true;
+						}
+						return false;
 					};
 
-					if (email === user.email && password === user.password) {
-						return done(null, payload);
+					if (!validatePayload) {
+						return done(null, false, { message: 'wrong credentials' });
 					}
 
-					//TODO this is required for hashing implementation
-					// if (isValidHash(user, password)) {
-					// 	return done(null, user);
-					// }
+					const payload = {
+						email: user.email,
+						id: user._id
+					};
 
-					// failed auth
-					return done(null, false);
+					return done(null, payload);
 				} catch (err) {
-					logger.log(err);
+					logger.error(err);
 				}
 			}
 		)
 	);
-
-	// 	//TODO after db implementation double check and remove
-	// passport.serializeUser((user, done) => {
-	// 	console.log('serializeWasUse');
-	// 	done(null, user);
-	// });
-	// passport.deserializeUser(async (user, done) => {
-	// 	// let result = await services.userService.getByEmail(user.email);
-	// 	console.log('deserializeWasUse');
-	// 	const result = credentials;
-	// 	return done(null, { email: result.email });
-	// });
 };

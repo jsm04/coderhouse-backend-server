@@ -25,19 +25,3 @@ export class User {
 		};
 	}
 }
-
-/*
-	products: [
-					{
-						product: { type: mongoose.Schema.Types.ObjectId, ref: 'Products' },
-						quantity: { type: Number, default: 1 },
-						_id: false
-					}
-				],
-
-
-
-	Working version
-
-	cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Products' }]
-*/

@@ -9,7 +9,8 @@ import passport from 'passport';
 import { registerPassportStrategies } from './config/passport.config.js';
 import { store_config } from './config/store.config.js';
 import { logger as Logger } from './entities/logger.js';
-import mainRouter from './routes/index.route.js';
+import homeRouter from './routes/home.route.js';
+import apiRouter from './routes/index.route.js';
 
 export class Server {
 	logger = Logger;
@@ -17,27 +18,27 @@ export class Server {
 		this.port = port;
 		this.server = express();
 		this.server.use(express.urlencoded({ extended: true }));
+		this.server.use(session(store_config));
 		this.server.use(express.json());
 		this.server.use(helmet.xssFilter());
 		this.server.use(helmet.noSniff());
 		this.server.use(helmet.hidePoweredBy());
 		this.server.use(helmet.frameguard({ action: 'deny' }));
 		this.server.use(cors());
-		this.server.use(session(store_config));
 		this.server.use(compress());
 		registerPassportStrategies();
 		this.server.use(passport.initialize());
-		// this.server.use(passport.session());
+		this.server.use(passport.session());
 		const router = Router();
 		this.server.use(router);
-		router.use('/api/v1', mainRouter);
-		router.use((err, _req, res, _next) => {
-			res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err.message);
-		});
-
-		if (process.env.NODE_ENV !== 'production') {
-			this.server.use(errorHandler());
-		}
+		router.use('/', homeRouter);
+		router.use('/api/v1', apiRouter);
+		// router.use((err, req, res, next) => {
+		// 	res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err.message);
+		// });
+		// if (process.env.NODE_ENV !== 'production') {
+		// 	this.server.use(errorHandler());
+		// }
 	}
 	async listen() {
 		return new Promise((resolve) => {
