@@ -7,14 +7,13 @@ const isTokenExpired = (exp) => Date.now() >= exp * 1000;
 
 export const validateAccessToken = async (req, res, next) => {
 	try {
-		if (!req.session || !req.session.token) {
+		if (!req.session || req.session.user) {
 			return res.redirect('/login');
 		}
-
 		const atoken = req.session.token.accesstoken;
-
 		const isTokenValid = jwt.verify(atoken, config.jwtAccessSecret, (err, decoded) => {
 			if (err) {
+				req.session.destroy();
 				req.session = null;
 				return res.redirect('/login');
 			}
@@ -32,14 +31,13 @@ export const validateAccessToken = async (req, res, next) => {
 };
 export const renewRefreshToken = async (req, res, next) => {
 	try {
-		if (!req.session.user || !req.session.token) {
+		if (!req.session.user) {
 			return res.redirect('/login');
 		}
-
 		const rtoken = req.session.token.refreshtoken;
-
 		const isTokenValid = jwt.verify(rtoken, config.jwtRefreshSecret, (err, decoded) => {
 			if (err) {
+				req.session.destroy();
 				req.session = null;
 				return res.redirect('/login');
 			}
@@ -48,12 +46,12 @@ export const renewRefreshToken = async (req, res, next) => {
 		});
 
 		if (!isTokenValid) {
+			req.session.destroy();
 			req.session = null;
 			return res.redirect('/login');
 		}
 
 		const redirectPath = req.header('Referer') || '/';
-
 		const payload = req.session.user;
 
 		req.session.token.accesstoken = accessToken(payload);

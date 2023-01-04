@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { orderService, productService, userService } from '../services/services.index.js';
 import crypto from 'crypto';
+import { orderService, productService, userService } from '../services/services.index.js';
 
 export class Mock {
 	static get getProduct() {
@@ -23,6 +23,13 @@ export class Mock {
 			username: `${this.name}${random.alphaNumeric(4)}`,
 			email: internet.email(),
 			password: random.alphaNumeric(7)
+		};
+	}
+
+	static get getOrder() {
+		const { database } = faker;
+		return {
+			user: database.mongodbObjectId()
 		};
 	}
 }

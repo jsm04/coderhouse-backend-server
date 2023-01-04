@@ -18,9 +18,7 @@ export const registerPassportStrategies = () => {
 			async (req, email, password, done) => {
 				try {
 					if (req.session.user) {
-						return done(null, false, {
-							message: 'session still active'
-						});
+						return done(null, false);
 					}
 
 					const { name, lastname, username } = req.body;

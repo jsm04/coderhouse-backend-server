@@ -14,8 +14,4 @@ export class App {
 	async stop() {
 		if (this.server) return this.server.stop();
 	}
-
-	async debug(message) {
-		return console.log(message);
-	}
 }

@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { isValidObjectId } from 'mongoose';
 import {
 	addProductsToCartHandler,
 	deleteUserByIdHandler,
@@ -11,10 +10,6 @@ import {
 	removeProductsFromCartHandler,
 	updatePasswordHandler
 } from '../controllers/users.controller.js';
-import { logger } from '../entities/logger.js';
-import { UserPostDTO } from '../entities/users/users.dto.js';
-import { productService, userService } from '../services/services.index.js';
-import { Mock } from '../utils/mock.js';
 
 const router = Router();
 

@@ -1,11 +1,9 @@
 import { Router } from 'express';
-import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import sessionControllers from '../controllers/sessions.controller.js';
 import { renewRefreshToken } from '../middlewares/jwtTokens.js';
 
 const router = Router();
-
 const options = { session: false, failureMessage: true };
 
 router.get('/', sessionControllers.testHandler);

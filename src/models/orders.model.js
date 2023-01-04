@@ -5,10 +5,10 @@ export class Order {
 	}
 	static get schema() {
 		return {
-			user: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true }],
+			user: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
 			orders: [
 				{
-					cart: { type: Array, required: true },
+					order: [],
 					status: {
 						type: String,
 						enum: ['pending', 'confirmed', 'completed'],
@@ -19,3 +19,5 @@ export class Order {
 		};
 	}
 }
+
+// cart: { type: Array, required: true },
