@@ -69,4 +69,4 @@ Only required env file property required to run tests is NODE_ENV='development',
 
 NODE_ENV='development' | 'production'
 
-### Other env values are anexed on env.example file
+### **Other env values are anexed on env.example file!**
