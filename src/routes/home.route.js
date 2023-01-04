@@ -6,7 +6,7 @@ const router = Router();
 router.get('*', (req, res, next) => {
 	res.on('finish', () => {
 		if ((res.statusCode = 404)) {
-			console.log(req.path);
+			//TODO handling of errors
 			next();
 		}
 	});

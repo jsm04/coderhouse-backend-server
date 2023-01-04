@@ -9,6 +9,7 @@ import passport from 'passport';
 import { registerPassportStrategies } from './config/passport.config.js';
 import { store_config } from './config/store.config.js';
 import { logger as Logger } from './entities/logger.js';
+import { debbugLogger } from './middlewares/errorLogger.js';
 import homeRouter from './routes/home.route.js';
 import apiRouter from './routes/index.route.js';
 
@@ -33,12 +34,13 @@ export class Server {
 		this.server.use(router);
 		router.use('/', homeRouter);
 		router.use('/api/v1', apiRouter);
-		// router.use((err, req, res, next) => {
-		// 	res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err.message);
-		// });
-		// if (process.env.NODE_ENV !== 'production') {
-		// 	this.server.use(errorHandler());
-		// }
+		router.use((err, req, res, next) => {
+			res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err.message);
+		});
+		if (process.env.NODE_ENV !== 'production') {
+			this.server.all('*', debbugLogger);
+			this.server.use(errorHandler());
+		}
 	}
 	async listen() {
 		return new Promise((resolve) => {
